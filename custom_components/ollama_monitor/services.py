@@ -13,6 +13,7 @@ from .const import (
     ATTR_CONFIG_ENTRY_ID,
     ATTR_DEVICE_ID,
     CONF_KEEP_ALIVE,
+    CONF_LINKED_DEVICE,
     CONF_MODEL,
     DOMAIN,
     SERVICE_LOAD_MODEL,
@@ -59,6 +60,12 @@ def _resolve_coordinators(hass: HomeAssistant, call: ServiceCall) -> list[Ollama
                 eid
                 for eid in (device.config_entries if device else ())
                 if (e := hass.config_entries.async_get_entry(eid)) and e.domain == DOMAIN
+            ]
+            # Hosts shown under someone else's device (e.g. the desktop's own device).
+            ours += [
+                e.entry_id
+                for e in hass.config_entries.async_entries(DOMAIN)
+                if e.options.get(CONF_LINKED_DEVICE) == device_id
             ]
             if not ours:
                 raise ServiceValidationError(

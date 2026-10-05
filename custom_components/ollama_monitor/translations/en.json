@@ -8,12 +8,14 @@
           "url": "URL",
           "name": "Name",
           "api_key": "API key",
-          "verify_ssl": "Verify SSL certificate"
+          "verify_ssl": "Verify SSL certificate",
+          "linked_device": "Show under device"
         },
         "data_description": {
           "url": "For example `http://192.168.1.20:11434` or `https://ollama.example.com`.",
           "name": "What to call this host in Home Assistant (e.g. Desktop, Pi). Defaults to something derived from the URL.",
-          "api_key": "Only needed if a proxy in front of Ollama wants a Bearer token."
+          "api_key": "Only needed if a proxy in front of Ollama wants a Bearer token.",
+          "linked_device": "Optional. Pick the computer's existing device (from System Monitor, the companion app, etc.) and these sensors appear there instead of on a separate Ollama device."
         }
       },
       "reconfigure": {
@@ -27,7 +29,9 @@
       "reauth_confirm": {
         "title": "Ollama rejected the credentials",
         "description": "{name} answered with 401/403. Enter a new API key (or clear it).",
-        "data": { "api_key": "API key" }
+        "data": {
+          "api_key": "API key"
+        }
       }
     },
     "error": {
@@ -46,29 +50,57 @@
   "options": {
     "step": {
       "init": {
-        "title": "Polling",
-        "data": { "scan_interval": "Update interval" },
-        "data_description": { "scan_interval": "How often to ask Ollama what's loaded. Installed models and version are refreshed every minute regardless." }
+        "title": "Options",
+        "data": {
+          "scan_interval": "Update interval",
+          "linked_device": "Show under device"
+        },
+        "data_description": {
+          "scan_interval": "How often to ask Ollama what's loaded. Installed models and version are refreshed every minute regardless.",
+          "linked_device": "Clear it to give this host its own Ollama device again."
+        }
       }
     }
   },
   "entity": {
     "binary_sensor": {
-      "online": { "name": "Online" },
-      "model_loaded": { "name": "Model loaded" }
+      "online": {
+        "name": "Online"
+      },
+      "model_loaded": {
+        "name": "Model loaded"
+      }
     },
     "button": {
-      "unload_all": { "name": "Unload all models" }
+      "unload_all": {
+        "name": "Unload all models"
+      }
     },
     "sensor": {
-      "loaded_model": { "name": "Loaded model" },
-      "loaded_models": { "name": "Loaded models" },
-      "vram_used": { "name": "VRAM used" },
-      "memory_used": { "name": "Model memory used" },
-      "next_unload": { "name": "Next unload" },
-      "installed_models": { "name": "Installed models" },
-      "disk_used": { "name": "Model storage" },
-      "version": { "name": "Ollama version" }
+      "loaded_model": {
+        "name": "Loaded model"
+      },
+      "loaded_models": {
+        "name": "Loaded models"
+      },
+      "vram_used": {
+        "name": "VRAM used"
+      },
+      "memory_used": {
+        "name": "Model memory used"
+      },
+      "next_unload": {
+        "name": "Next unload"
+      },
+      "installed_models": {
+        "name": "Installed models"
+      },
+      "disk_used": {
+        "name": "Model storage"
+      },
+      "version": {
+        "name": "Ollama version"
+      }
     }
   },
   "services": {
@@ -76,27 +108,56 @@
       "name": "Load model",
       "description": "Loads a model into memory on an Ollama host, optionally keeping it there for a while.",
       "fields": {
-        "device_id": { "name": "Host", "description": "Which Ollama host(s). Can be left out if you only have one." },
-        "model": { "name": "Model", "description": "Model name as shown by `ollama list`, e.g. qwen3:14b." },
-        "keep_alive": { "name": "Keep alive", "description": "How long to keep it loaded: 5m, 30m, 2h, 24h, forever. Leave empty for the server default." }
+        "device_id": {
+          "name": "Host",
+          "description": "Which Ollama host(s). Can be left out if you only have one."
+        },
+        "model": {
+          "name": "Model",
+          "description": "Model name as shown by `ollama list`, e.g. qwen3:14b."
+        },
+        "keep_alive": {
+          "name": "Keep alive",
+          "description": "How long to keep it loaded: 5m, 30m, 2h, 24h, forever. Leave empty for the server default."
+        }
       }
     },
     "unload_model": {
       "name": "Unload model",
       "description": "Evicts a model from memory right away. Leave the model empty to unload everything.",
       "fields": {
-        "device_id": { "name": "Host", "description": "Which Ollama host(s). Can be left out if you only have one." },
-        "model": { "name": "Model", "description": "Model to unload. Empty means all loaded models." }
+        "device_id": {
+          "name": "Host",
+          "description": "Which Ollama host(s). Can be left out if you only have one."
+        },
+        "model": {
+          "name": "Model",
+          "description": "Model to unload. Empty means all loaded models."
+        }
       }
     }
   },
   "exceptions": {
-    "device_not_found": { "message": "Device {device_id} isn't an Ollama Monitor host." },
-    "entry_not_loaded": { "message": "Ollama Monitor entry {entry_id} isn't set up or loaded." },
-    "no_target": { "message": "You have more than one Ollama host, so pick which one (device_id)." },
-    "invalid_keep_alive": { "message": "Didn't understand keep_alive \"{value}\". Try 5m, 1h30m, 3600 or forever." },
-    "keep_alive_zero": { "message": "A keep_alive of 0 would unload the model straight away. Use the unload action instead." },
-    "host_offline": { "message": "{host} is unreachable, couldn't {action}: {error}" },
-    "request_failed": { "message": "{host} couldn't {action}: {error}" }
+    "device_not_found": {
+      "message": "Device {device_id} isn't an Ollama Monitor host."
+    },
+    "entry_not_loaded": {
+      "message": "Ollama Monitor entry {entry_id} isn't set up or loaded."
+    },
+    "no_target": {
+      "message": "You have more than one Ollama host, so pick which one (device_id)."
+    },
+    "invalid_keep_alive": {
+      "message": "Didn't understand keep_alive \"{value}\". Try 5m, 1h30m, 3600 or forever."
+    },
+    "keep_alive_zero": {
+      "message": "A keep_alive of 0 would unload the model straight away. Use the unload action instead."
+    },
+    "host_offline": {
+      "message": "{host} is unreachable, couldn't {action}: {error}"
+    },
+    "request_failed": {
+      "message": "{host} couldn't {action}: {error}"
+    }
   }
 }

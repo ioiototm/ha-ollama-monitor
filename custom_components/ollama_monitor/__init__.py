@@ -14,6 +14,7 @@ from homeassistant.helpers.typing import ConfigType
 from .api import OllamaClient
 from .const import CARD_FILENAME, CARD_URL_BASE, CONF_API_KEY, DOMAIN, VERSION
 from .coordinator import OllamaMonitorConfigEntry, OllamaMonitorCoordinator
+from .entity import linked_device
 from .services import async_setup_services
 
 _LOGGER = logging.getLogger(__name__)
@@ -57,21 +58,41 @@ async def async_setup_entry(hass: HomeAssistant, entry: OllamaMonitorConfigEntry
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
 
+    _tidy_devices(hass, entry)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     @callback
     def _sync_sw_version() -> None:
-        """Keep the device's firmware field in step with Ollama upgrades."""
+        """Keep our own device's firmware field in step with Ollama upgrades."""
         version = coordinator.data.version if coordinator.data else None
         if not version:
             return
         dev_reg = dr.async_get(hass)
         for device in dr.async_entries_for_config_entry(dev_reg, entry.entry_id):
-            if device.sw_version != version:
+            # Never touch a linked device: its version belongs to whatever made it.
+            if (DOMAIN, entry.entry_id) in device.identifiers and device.sw_version != version:
                 dev_reg.async_update_device(device.id, sw_version=version)
 
     entry.async_on_unload(coordinator.async_add_listener(_sync_sw_version))
     return True
+
+
+@callback
+def _tidy_devices(hass: HomeAssistant, entry: OllamaMonitorConfigEntry) -> None:
+    """Drop device links that no longer match the "show under device" option.
+
+    Linked: our own "Ollama server" device would sit there empty, so remove it.
+    Not linked (or linked elsewhere): on older HA versions linking added this entry
+    to the other device, so take it back off.
+    """
+    dev_reg = dr.async_get(hass)
+    target = linked_device(hass, entry)
+    for device in dr.async_entries_for_config_entry(dev_reg, entry.entry_id):
+        ours = (DOMAIN, entry.entry_id) in device.identifiers
+        if ours and target is not None:
+            dev_reg.async_remove_device(device.id)
+        elif not ours and (target is None or device.id != target.id):
+            dev_reg.async_update_device(device.id, remove_config_entry_id=entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: OllamaMonitorConfigEntry) -> bool:

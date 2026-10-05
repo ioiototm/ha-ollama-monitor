@@ -3,7 +3,8 @@ load_model:
     device_id:
       selector:
         device:
-          integration: ollama_monitor
+          entity:
+            - integration: ollama_monitor
           multiple: true
     model:
       required: true
@@ -20,7 +21,8 @@ unload_model:
     device_id:
       selector:
         device:
-          integration: ollama_monitor
+          entity:
+            - integration: ollama_monitor
           multiple: true
     model:
       example: "qwen3:14b"

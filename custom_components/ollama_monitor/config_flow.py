@@ -15,6 +15,8 @@ from homeassistant.const import CONF_NAME, CONF_URL, CONF_VERIFY_SSL
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
+    DeviceSelector,
+    DeviceSelectorConfig,
     NumberSelector,
     NumberSelectorConfig,
     NumberSelectorMode,
@@ -28,6 +30,7 @@ from yarl import URL
 from .api import OllamaAuthError, OllamaClient, OllamaConnectionError, OllamaError, normalize_url
 from .const import (
     CONF_API_KEY,
+    CONF_LINKED_DEVICE,
     CONF_SCAN_INTERVAL,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
@@ -52,6 +55,8 @@ def _host_schema(defaults: dict[str, Any], *, with_name: bool) -> vol.Schema:
         TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD))
     )
     fields[vol.Optional(CONF_VERIFY_SSL, default=defaults.get(CONF_VERIFY_SSL, True))] = bool
+    if with_name:
+        fields[vol.Optional(CONF_LINKED_DEVICE)] = DeviceSelector(DeviceSelectorConfig())
     return vol.Schema(fields)
 
 
@@ -106,8 +111,12 @@ class OllamaMonitorConfigFlow(ConfigFlow, domain=DOMAIN):
                 await self.async_set_unique_id(url.lower())
                 self._abort_if_unique_id_configured()
                 name = (user_input.get(CONF_NAME) or "").strip() or _default_name(url)
+                options = {}
+                if user_input.get(CONF_LINKED_DEVICE):
+                    options[CONF_LINKED_DEVICE] = user_input[CONF_LINKED_DEVICE]
                 return self.async_create_entry(
                     title=name,
+                    options=options,
                     data={
                         CONF_URL: url,
                         CONF_API_KEY: (user_input.get(CONF_API_KEY) or "").strip() or None,
@@ -179,18 +188,23 @@ class OllamaMonitorConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class OllamaMonitorOptionsFlow(OptionsFlowWithReload):
-    """Polling interval."""
+    """Polling interval and which device the host shows up under."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Show options."""
         if user_input is not None:
-            return self.async_create_entry(data={CONF_SCAN_INTERVAL: int(user_input[CONF_SCAN_INTERVAL])})
-        current = self.config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+            data: dict[str, Any] = {CONF_SCAN_INTERVAL: int(user_input[CONF_SCAN_INTERVAL])}
+            if user_input.get(CONF_LINKED_DEVICE):
+                data[CONF_LINKED_DEVICE] = user_input[CONF_LINKED_DEVICE]
+            return self.async_create_entry(data=data)
+        options = self.config_entry.options
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_SCAN_INTERVAL, default=current): NumberSelector(
+                    vol.Required(
+                        CONF_SCAN_INTERVAL, default=options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+                    ): NumberSelector(
                         NumberSelectorConfig(
                             min=MIN_SCAN_INTERVAL,
                             max=MAX_SCAN_INTERVAL,
@@ -198,7 +212,11 @@ class OllamaMonitorOptionsFlow(OptionsFlowWithReload):
                             unit_of_measurement="s",
                             mode=NumberSelectorMode.BOX,
                         )
-                    )
+                    ),
+                    vol.Optional(
+                        CONF_LINKED_DEVICE,
+                        description={"suggested_value": options.get(CONF_LINKED_DEVICE)},
+                    ): DeviceSelector(DeviceSelectorConfig()),
                 }
             ),
         )

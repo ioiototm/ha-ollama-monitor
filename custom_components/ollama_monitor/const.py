@@ -23,6 +23,7 @@ CONF_API_KEY: Final = "api_key"
 CONF_KEEP_ALIVE: Final = "keep_alive"
 CONF_MODEL: Final = "model"
 CONF_SCAN_INTERVAL: Final = "scan_interval"
+CONF_LINKED_DEVICE: Final = "linked_device"
 
 ATTR_DEVICE_ID: Final = "device_id"
 ATTR_CONFIG_ENTRY_ID: Final = "config_entry_id"

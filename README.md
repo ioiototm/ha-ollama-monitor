@@ -19,10 +19,11 @@ Then **Settings → Devices & services → Add integration → Ollama Monitor**,
 | URL | `desktop.local` is fine: no scheme means `http://` and port `11434`. Full URLs work too, including reverse-proxied `https://ollama.example.com`. |
 | Name | What the device is called (`Desktop`, `Pi`). Defaults to something derived from the hostname. |
 | API key | Only if a proxy in front of Ollama wants a Bearer token. |
+| Show under device | Optional. Pick the computer's existing device (from System Monitor, the companion app, whatever made one) and the Ollama sensors appear on that device instead of a separate "Ollama server" one. |
 
 Ollama only listens on localhost by default. On each host set `OLLAMA_HOST=0.0.0.0` (for systemd: `systemctl edit ollama`, add `Environment="OLLAMA_HOST=0.0.0.0"`, restart) so Home Assistant can reach it.
 
-The polling interval (default 10 s) is under the integration's **Configure** button.
+The polling interval (default 10 s) and the *Show under device* link can be changed later under the integration's **Configure** button. Clearing the link gives the host its own device back.
 
 ## What you get per host
 
@@ -69,7 +70,7 @@ data:
   model: qwen3:14b                   # leave out to unload everything on that host
 ```
 
-Both actions take `device_id` (one or a list) or `config_entry_id`. If neither is given and there's only one host, that one is used.
+Both actions take `device_id` (one or a list; a linked computer's device works too) or `config_entry_id`. If neither is given and there's only one host, that one is used.
 
 ### Automation ideas
 
