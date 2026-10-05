@@ -130,6 +130,10 @@ pytest -q
 
 Tests run against Home Assistant's own test harness with Ollama's HTTP API mocked.
 
+## Credits
+
+The code, card and tests were written entirely by Claude (Anthropic's AI), from an idea and testing by [@ioiototm](https://github.com/ioiototm).
+
 ## Licence
 
 [Unlicense](https://unlicense.org): public domain, do whatever you like with it.
