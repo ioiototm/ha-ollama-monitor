@@ -132,7 +132,7 @@ Tests run against Home Assistant's own test harness with Ollama's HTTP API mocke
 
 ## Credits
 
-The code, card and tests were written entirely by Claude (Anthropic's AI), from an idea and testing by [@ioiototm](https://github.com/ioiototm).
+The code, card and tests were written entirely by Claude Opus 5.5 (Anthropic's AI), from an idea and testing by me. Feel free to remake it, fork it, use it however you want.
 
 ## Licence
 
