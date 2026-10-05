@@ -1,0 +1,13 @@
+{
+  "domain": "ollama_monitor",
+  "name": "Ollama Monitor",
+  "after_dependencies": ["frontend", "http"],
+  "codeowners": ["@ioiototm"],
+  "config_flow": true,
+  "documentation": "https://github.com/ioiototm/ha-ollama-monitor",
+  "integration_type": "service",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/ioiototm/ha-ollama-monitor/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

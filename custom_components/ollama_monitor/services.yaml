@@ -1,0 +1,28 @@
+load_model:
+  fields:
+    device_id:
+      selector:
+        device:
+          integration: ollama_monitor
+          multiple: true
+    model:
+      required: true
+      example: "qwen3:14b"
+      selector:
+        text:
+    keep_alive:
+      example: "30m"
+      selector:
+        text:
+
+unload_model:
+  fields:
+    device_id:
+      selector:
+        device:
+          integration: ollama_monitor
+          multiple: true
+    model:
+      example: "qwen3:14b"
+      selector:
+        text:

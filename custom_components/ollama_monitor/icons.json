@@ -1,0 +1,25 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "online": { "default": "mdi:server-network", "state": { "off": "mdi:server-network-off" } },
+      "model_loaded": { "default": "mdi:brain" }
+    },
+    "button": {
+      "unload_all": { "default": "mdi:eject" }
+    },
+    "sensor": {
+      "loaded_model": { "default": "mdi:brain", "state": { "idle": "mdi:sleep" } },
+      "loaded_models": { "default": "mdi:layers-triple" },
+      "vram_used": { "default": "mdi:expansion-card" },
+      "memory_used": { "default": "mdi:memory" },
+      "next_unload": { "default": "mdi:timer-sand" },
+      "installed_models": { "default": "mdi:package-variant-closed" },
+      "disk_used": { "default": "mdi:harddisk" },
+      "version": { "default": "mdi:tag-outline" }
+    }
+  },
+  "services": {
+    "load_model": { "service": "mdi:upload" },
+    "unload_model": { "service": "mdi:eject" }
+  }
+}
