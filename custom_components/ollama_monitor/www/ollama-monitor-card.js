@@ -1,5 +1,5 @@
 /*
- * Ollama Monitor card — ships with the ollama_monitor integration (CC0).
+ * Ollama Monitor card — ships with the ollama_monitor integration (Unlicense).
  *
  *   type: custom:ollama-monitor-card
  *   title: Local AI            # optional

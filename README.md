@@ -131,4 +131,4 @@ Tests run against Home Assistant's own test harness with Ollama's HTTP API mocke
 
 ## Licence
 
-CC0. Do whatever you like with it.
+[Unlicense](https://unlicense.org): public domain, do whatever you like with it.
