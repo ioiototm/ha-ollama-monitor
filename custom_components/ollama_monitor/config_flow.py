@@ -127,6 +127,10 @@ class OllamaMonitorConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=_host_schema(user_input or {}, with_name=True),
             errors=errors,
+            description_placeholders={
+                "example_local": "http://192.168.1.20:11434",
+                "example_proxied": "https://ollama.example.com",
+            },
         )
 
     async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:

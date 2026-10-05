@@ -12,7 +12,7 @@
           "linked_device": "Show under device"
         },
         "data_description": {
-          "url": "For example `http://192.168.1.20:11434` or `https://ollama.example.com`.",
+          "url": "For example `{example_local}` or `{example_proxied}`.",
           "name": "What to call this host in Home Assistant (e.g. Desktop, Pi). Defaults to something derived from the URL.",
           "api_key": "Only needed if a proxy in front of Ollama wants a Bearer token.",
           "linked_device": "Optional. Pick the computer's existing device (from System Monitor, the companion app, etc.) and these sensors appear there instead of on a separate Ollama device."
